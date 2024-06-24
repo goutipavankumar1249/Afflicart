@@ -34,7 +34,7 @@ class ShopPage extends StatelessWidget {
         // Implement your buy now functionality or navigation here
       },
       child: Container(
-        width: 150,
+        width: 130,
         height: 200,
         decoration: BoxDecoration(
           color: Colors.white,

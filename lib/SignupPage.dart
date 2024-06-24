@@ -1,29 +1,25 @@
+// sign_up_page.dart
 import 'package:flutter/material.dart';
-import 'package:test1/LoginPage.dart';
-import 'package:test1/VerifyMobile.dart';
+import 'package:project/fire_services.dart';
+import 'package:project/LoginPage.dart';
 
-class SignupPage extends StatefulWidget {
-  const SignupPage({Key? key});
-
+class SignUpPage extends StatefulWidget {
   @override
-  _SignupPageState createState() => _SignupPageState();
+  _SignUpPageState createState() => _SignUpPageState();
 }
 
-class _SignupPageState extends State<SignupPage> {
+class _SignUpPageState extends State<SignUpPage> {
+  final FireServices _fireServices = FireServices();
+
   bool isPasswordVisible = false;
   bool isConfirmPasswordVisible = false;
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   bool passwordsMatch = true; // Initially assume they match
 
-  @override
-  void dispose() {
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-  void _checkPasswordMatch() {
+  void checkPasswordMatch() {
     if (passwordController.text != confirmPasswordController.text) {
       setState(() {
         passwordsMatch = false;
@@ -35,170 +31,211 @@ class _SignupPageState extends State<SignupPage> {
     }
   }
 
+  void handleSignUp() async {
+    if (!passwordsMatch) {
+      _fireServices.showToast('Passwords do not match');
+      return;
+    }
+    await _fireServices.handleSignUp(
+      context,
+      emailController.text.trim(),
+      passwordController.text,
+      usernameController.text.trim(),
+    );
+  }
+
+  void signInWithGoogle() async {
+    await _fireServices.signInWithGoogle(context);
+  }
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                const SizedBox(height: 60.0),
-                Container(
-                  height: 150,
-                  width: 150,
-                  child: Image.asset('assets/images/Logo.png'),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  "Create your account",
-                  style: TextStyle(fontSize: 15, color: Colors.grey[700]),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: "Username",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(18),
-                      borderSide: BorderSide.none,
-                    ),
-                    fillColor: Colors.green.withOpacity(0.1),
-                    filled: true,
-                    prefixIcon: const Icon(Icons.person),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: "E-Mail",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(18),
-                      borderSide: BorderSide.none,
-                    ),
-                    fillColor: Colors.green.withOpacity(0.1),
-                    filled: true,
-                    prefixIcon: const Icon(Icons.email),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: passwordController,
-                  decoration: InputDecoration(
-                    hintText: "Password",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(18),
-                      borderSide: BorderSide.none,
-                    ),
-                    fillColor: Colors.green.withOpacity(0.1),
-                    filled: true,
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isPasswordVisible = !isPasswordVisible;
-                        });
-                      },
-                      icon: Icon(
-                        isPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+    return Scaffold(
+      backgroundColor: Color(0xFFDAF0CB),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 15, right: 15, top: 60),
+            child: Card(
+              color: Color(0xFFD9F1C4),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              elevation: 8,
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset('assets/images/Logo.png', height: 80),
+                    Text(
+                      'Create Your Account',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
-                      color: Colors.black,
                     ),
-                  ),
-                  obscureText: !isPasswordVisible,
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: confirmPasswordController,
-                  onChanged: (_) {
-                    _checkPasswordMatch();
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Confirm Password",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(18),
-                      borderSide: BorderSide.none,
-                    ),
-                    fillColor: Colors.green.withOpacity(0.1),
-                    filled: true,
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isConfirmPasswordVisible = !isConfirmPasswordVisible;
-                        });
-                      },
-                      icon: Icon(
-                        isConfirmPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+                    SizedBox(height: 5),
+                    Text(
+                      'Join us and earn cashback on your favorite stores!',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.green.shade900,
+                        fontWeight: FontWeight.bold,
                       ),
-                      color: Colors.black,
                     ),
-                    errorText: !passwordsMatch ? "Passwords don't match" : null,
-                  ),
-                  obscureText: !isConfirmPasswordVisible,
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    if (passwordController.text == confirmPasswordController.text) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => VerifyMobile(),
+                    SizedBox(height: 15),
+                    _buildTextField('Username', usernameController),
+                    SizedBox(height: 5),
+                    _buildTextField('Email', emailController),
+                    SizedBox(height: 5),
+                    _buildTextField('Password', passwordController, obscureText: true),
+                    SizedBox(height: 5),
+                    _buildTextField('Confirm Password', confirmPasswordController, obscureText: true),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: false,
+                          onChanged: (bool? value) {},
+                          activeColor: Color(0xFF82C341),
                         ),
-                      );
-                    } else {
-                      // Handle case where passwords don't match
-                      setState(() {
-                        passwordsMatch = false;
-                      });
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: const StadiumBorder(),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    backgroundColor: Colors.green,
-                  ),
-                  child: const Text(
-                    "Sign up",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
+                        Expanded(
+                          child: Text(
+                            'I agree to the Terms and Privacy Policy',
+                            style: TextStyle(
+                              color: Colors.green.shade900,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Text("Already have an account?"),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
-                      },
-                      child: const Text(
-                        "Login",
-                        style:
-                        TextStyle(color: Color.fromARGB(255, 236, 143, 2)),
+                    SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: handleSignUp,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            'Create Account',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.green.shade900,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 80),
+                    SizedBox(height: 10),
+                    Text(
+                      'or sign up with',
+                      style: TextStyle(
+                        color: Color(0xFF82C341),
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: signInWithGoogle,
+                          child: Image.asset('assets/images/google.png', height: 30),
+                        ),
+                        SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: signInWithGoogle,
+                          child: Image.asset('assets/images/insta.png', height: 30),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Already have an account?',
+                          style: TextStyle(
+                            color: Color(0xFF82C341),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Log in',
+                            style: TextStyle(
+                              color: Colors.green.shade900,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, {bool obscureText = false}) {
+    return Container(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: Color(0xFF82C341),
+              fontSize: 12,
+            ),
+          ),
+          SizedBox(height: 2),
+          TextField(
+            controller: controller,
+            obscureText: obscureText,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.transparent,
+              contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide(color: Colors.green.shade700),
+              ),
+            ),
+            style: TextStyle(color: Colors.black),
+          ),
+        ],
       ),
     );
   }

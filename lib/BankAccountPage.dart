@@ -1,173 +1,180 @@
-import 'package:test1/DashboardPage.dart';
-import 'package:test1/LoginPage.dart';
 import 'package:flutter/material.dart';
-import 'package:test1/UpiPage.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:project/BankDetailsPage.dart';
+import 'package:project/MyEarningsPage.dart';
+import 'package:project/UserState.dart';
 
 class BankAccountPage extends StatelessWidget {
-  const BankAccountPage({super.key});
+  BankAccountPage({super.key});
+
+  final TextEditingController accountHolderNameController = TextEditingController();
+  final TextEditingController accountNumberController = TextEditingController();
+  final TextEditingController ifscCodeController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+
+  Future<void> _saveBankDetails(BuildContext context) async {
+    String userId = Provider.of<UserState>(context, listen: false).userId;
+
+    DatabaseReference database = FirebaseDatabase.instance.ref();
+    await database.child('users').child(userId).child('bankDetails').update({
+      'accountHolderName': accountHolderNameController.text.trim(),
+      'accountNumber': accountNumberController.text.trim(),
+      'ifscCode': ifscCodeController.text.trim(),
+      'phoneNumber': phoneNumberController.text.trim(),
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            height: MediaQuery.of(context).size.height - 50,
-            width: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Column(
-                  
-                  children: <Widget>[
-                    const SizedBox(height: 60.0),
-
-                    Container(
-                      height: 150,
-                      width: 150,
-                      child: Image.asset('assets/images/Logo.png'),
-                      
-                    ),
-                    
-                    Text(
-                      "Enter Your Account Details",
-                      style: TextStyle(fontSize: 15, color: Colors.grey[700]),
-                    )
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    TextField(
-                        decoration: InputDecoration(
-                          hintText: "Enter your Account Number",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
-                            borderSide: BorderSide.none,
-                          ),
-                          fillColor: Colors.green.withOpacity(0.1),
-                          filled: true,
-                          prefixIcon: const Icon(Icons.account_balance), // Change the icon to represent account balance
-                        ),
-                      ),
-
-
-                    const SizedBox(height: 20),
-
-                    TextField(
-                        decoration: InputDecoration(
-                          hintText: "Enter Your IFS Code",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
-                            borderSide: BorderSide.none,
-                          ),
-                          fillColor: Colors.green.withOpacity(0.1),
-                          filled: true,
-                          prefixIcon: const Icon(Icons.account_balance), // Change the icon to represent account balance
-                        ),
-                      ),
-
-                    const SizedBox(height: 20),
-
-                    TextField(
-                          decoration: InputDecoration(
-                            hintText: "Enter College Name",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: BorderSide.none,
-                            ),
-                            fillColor: Colors.green.withOpacity(0.1),
-                            filled: true,
-                            prefixIcon: const Icon(Icons.school), // Use the college icon here
-                          ),
-                    ),
-                    
-                    
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Container(
-                    padding: const EdgeInsets.only(top: 3, left: 3),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "Continue",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        shape: const StadiumBorder(),
-                        padding: const EdgeInsets.symmetric(vertical: 1),
-                        backgroundColor: Colors.green,
-                      ),
-                    )),
-                const SizedBox(height: 10),
-                // Container(
-                //     padding: const EdgeInsets.only(top: 3, left: 3),
-
-                //     child: ElevatedButton(
-                //       onPressed: () {
-                //       },
-                //       style: ElevatedButton.styleFrom(
-                //         shape: const StadiumBorder(),
-                //         padding: const EdgeInsets.symmetric(vertical: 1),
-                //         backgroundColor: Colors.green,
-                //       ),
-                //       child: const Text(
-                //         "Continue With Google",
-                //         style: TextStyle(
-                //           fontSize: 18,
-                //           color: Colors.white,
-                //         ),
-                //       ),
-                //     )
-                // ),
-                  ],
-                ),
-                
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Text("Continue with"),
-                    TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => UpiPage()),
-                            );
-                          },
-                        child: const Text("UPI ID", style: TextStyle(color: Color.fromARGB(255, 236, 143, 2)  )
-                        )
-                    )
-                  ],
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => DashboardPage()),
-                            );
-                          },
-                        child: const Text("Skip now", style: TextStyle(color: Color.fromARGB(255, 141, 141, 141)  )
-                        )
-                    )
-                  ],
-                )
-              ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(170, 206, 144, 1),
+        title: Center(
+          child: Text(
+            'Edit Bank Details',
+            style: GoogleFonts.poppins(
+              color: Colors.green.shade900,
+              fontStyle: FontStyle.italic,
+              fontSize: 35,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
+      ),
+      backgroundColor: const Color.fromRGBO(170, 206, 144, 1),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 15, right: 15, top: 40),
+            child: Card(
+              color: Color(0xFFD9F1C4),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              elevation: 8,
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset('assets/images/Logo.png', height: 100),
+                    SizedBox(height: 5),
+                    Text(
+                      'Fill Bank Details',
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        color: Colors.green.shade900,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    _buildTextField('Account Holder Name', accountHolderNameController),
+                    SizedBox(height: 10),
+                    _buildTextField('Account Number', accountNumberController),
+                    SizedBox(height: 10),
+                    _buildTextField('IFSC Code', ifscCodeController),
+                    SizedBox(height: 10),
+                    _buildTextField('Phone Number', phoneNumberController),
+                    SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          await _saveBankDetails(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BankDetailsPage(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            'Continue',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              color: Colors.green.shade900,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MyEarningsPage(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Skip Now',
+                            style: GoogleFonts.poppins(
+                              color: Colors.green.shade900,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, {bool obscureText = false}) {
+    return Container(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.poppins(
+              color: Color(0xFF82C341),
+              fontSize: 12,
+            ),
+          ),
+          SizedBox(height: 2),
+          TextField(
+            controller: controller,
+            obscureText: obscureText,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.transparent,
+              contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide(color: Colors.green.shade700),
+              ),
+            ),
+            style: GoogleFonts.poppins(color: Colors.black),
+          ),
+        ],
       ),
     );
   }

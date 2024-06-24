@@ -1,146 +1,229 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'CardWithGradient.dart';
+import 'DashboardPage.dart';
+import 'EditProfilePage.dart';
 
-void main() {
-  runApp(userprofile());
+class UserProfile extends StatefulWidget {
+  @override
+  _UserProfileState createState() => _UserProfileState();
 }
 
-class userprofile extends StatelessWidget {
+class _UserProfileState extends State<UserProfile> {
+  String name = '';
+  String email = '';
+  String phoneNumber = '';
+  String bankAccount = '';
+  String bankIfsc = '';
+  String gender = '';
+  bool _showData = false;
+  bool _hasBankDetails = false;
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'PROFILE'
-            ),
-        ),
-        body: UserProfile(),
-      ),
-    );
+  void initState() {
+    super.initState();
+    _fetchUserData();
   }
-}
 
-class UserProfile extends StatelessWidget {
+  Future<void> _fetchUserData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String userId = user.uid;
+      DatabaseReference userRef = FirebaseDatabase.instance.ref().child('users').child(userId);
+      DatabaseEvent event = await userRef.once();
+      Map userData = event.snapshot.value as Map;
+
+      setState(() {
+        name = userData['username'] ?? '';
+        email = userData['email'] ?? '';
+        phoneNumber = userData['phoneNumber'] ?? '';
+        bankAccount = userData['bankAccount'] ?? '';
+        bankIfsc = userData['bankIfsc'] ?? '';
+        gender = userData['gender'] ?? '';
+        _hasBankDetails = bankAccount.isNotEmpty && bankIfsc.isNotEmpty;
+      });
+    }
+  }
+
+  Future<bool> _onWillPop() async {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => Dashboard()), // Replace with your DashboardPage
+    );
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SizedBox(height: 10),
-          CircleAvatar(
-            radius: 80,
-            child: Icon(
-              Icons.person, // Replace with the icon you want to use
-              size: 100, // Adjust the size of the icon as needed
-              color: Colors.white, // Adjust the color of the icon as needed
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'User Name',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 15),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: ListView(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              children: [
-                UserInfoItem(
-                  icon: Icons.email,
-                  label: 'Email :',
-                  value: 'ABCD@example.com',
-                ),
-                UserInfoItem(
-                  icon: Icons.phone,
-                  label: 'Phone:',
-                  value: '+1234567890',
-                ),
-                SizedBox(height:10),
-                Text(
-                  "Bank details :",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        backgroundColor: const Color.fromRGBO(170, 206, 144, 1),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CardWithGradient(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _table('Hello,', name, 20),
+                            _table('Email ID', email, 16),
+                            _table('Phone Number', phoneNumber, 20),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => EditProfilePage()),
+                                );
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Edit Profile",
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.edit_outlined,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                ],
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                shape: const StadiumBorder(),
+                                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                                backgroundColor: Colors.green[700],
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            if (_hasBankDetails)
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _showData = !_showData;
+                                  });
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Bank Details",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  shape: const StadiumBorder(),
+                                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                                  backgroundColor: Colors.green[700],
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            child: Image.asset(
+                              gender == 'male'
+                                  ? 'assets/images/Male.png'
+                                  : 'assets/images/Female.png',
+                              height: 200,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height:10),
-                UserInfoItem(
-                  icon: Icons.account_balance,
-                  label: 'Account no:',
-                  value: '1234 5678 9012 3456',
+              ),
+              SizedBox(height: 10),
+              if (_showData && _hasBankDetails)
+                CardWithGradient(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Bank Details",
+                              style: GoogleFonts.poppins(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.green.shade900,
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _table('Account Number', bankAccount, 20),
+                                _table('IFSC Code', bankIfsc, 20),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                SizedBox(height:10),
-                UserInfoItem(
-                  icon: Icons.account_balance,
-                  label: 'IFSC code:',
-                  value: 'XXXXXXXXXXXXXXXX',
-                ),
-                SizedBox(height:10),
-                UserInfoItem(
-                  icon: Icons.account_balance,
-                  label: 'UPI ID:',
-                  value: 'XXXXXXXXXXXXXXXX',
-                ),
-              ],
-            ),
+            ],
           ),
-          SizedBox(height: 20),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: ElevatedButton(
-              onPressed: () {
-                // Handle edit button press
-              },
-              child: Text('Edit Profile'),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
-}
 
-class UserInfoItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
-  const UserInfoItem({
-    Key? key,
-    required this.icon,
-    required this.label,
-    required this.value,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _table(String title, String value, double font) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon),
-          SizedBox(width: 10),
           Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+            title,
+            style: GoogleFonts.poppins(
+              color: Colors.grey.shade700,
+              fontStyle: FontStyle.italic,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(width: 10),
           Text(
             value,
             style: TextStyle(
-              fontSize: 15,
+              color: Colors.green.shade700,
+              fontStyle: FontStyle.italic,
+              fontSize: font,
+              fontWeight: FontWeight.w600,
+              overflow: TextOverflow.ellipsis,
             ),
+            maxLines: 2,
           ),
+          SizedBox(height: 5),
         ],
       ),
     );

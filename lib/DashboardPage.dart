@@ -1,122 +1,215 @@
 import 'package:flutter/material.dart';
-import 'package:test1/userprofile.dart';
-import 'HomePage.dart';
-import 'ShopPage.dart'; // Placeholder for ShopPage
-import 'ProfilePage.dart';
-import 'MyEarningsPage.dart';// Placeholder for ProfilePage
-// import 'SettingsPage.dart'; // Placeholder for SettingsPage
+import 'package:project/AboutUsPage.dart';
+import 'package:project/CashBackPage.dart';
+import 'package:project/ContactUsPage.dart';
+import 'package:project/FeaturedStoresPage.dart';
+import 'package:project/KnowMorePage.dart';
+import 'package:project/LandingPage.dart';
+import 'package:project/LoginPage.dart';
+import 'package:project/MyEarningsPage.dart';
+import 'package:project/UserProfile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class DashboardPage extends StatefulWidget {
+class Dashboard extends StatefulWidget {
   @override
-  _DashboardPageState createState() => _DashboardPageState();
+  _DashboardState createState() => _DashboardState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
-  int _currentIndex = 0;
+class _DashboardState extends State<Dashboard> {
+  int _selectedIndex = 0;
+
+  final PageController _pageController = PageController();
 
   final List<Widget> _pages = [
-    HomePage(),
-    MyEarningsPage(), // Placeholder for ShopPage
-    userprofile(), // Placeholder for ProfilePage
-    // SettingsPage(), // Placeholder for SettingsPage
+  SafeArea(
+    child: LandingPage(onShopNow: () => _changePage(2)),
+  ),
+  SafeArea(
+    child: MyEarningsPage(),
+  ),
+  SafeArea(
+    child: FeaturedStoresPage(),
+  ),
+  SafeArea(
+    child: UserProfile(),
+  ),
+  SafeArea(
+    child: CashbackPage(),
+  ),
+];
+
+  final List<String> _titles = [
+    '',
+    'My Earnings',
+    'Stores',
+    'User Profile',
+    'Help',
   ];
+
+  static _DashboardState? _instance;
+
+  _DashboardState() {
+    _instance = this;
+  }
+
+  static void _changePage(int index) {
+    _instance?.setState(() {
+      _instance!._selectedIndex = index;
+    });
+    _instance?._pageController.jumpToPage(index);
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    _pageController.jumpToPage(index);
+  }
+
+  void _onDrawerItemTapped(Widget page) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => page),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromRGBO(170, 206, 144, 1),
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
+          ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _titles[_selectedIndex],
+                style: GoogleFonts.poppins(
+                  color: Colors.green[700],
+                  fontSize: 30,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(width: 45), 
+            ],
+          ),
+          titleSpacing: 0,
+          toolbarHeight: 55,
+        ),
+        body: Stack(
           children: [
-            // IconButton(
-            //   icon: Icon(Icons.menu),
-            //   onPressed: () {
-            //     // Open drawer when menu icon is pressed
-            //     Scaffold.of(context).openDrawer();
-            //   },
-            // ),
-            // SizedBox(width: 10),
-            Image.asset('assets/images/Logo.png', height: 60),
-            SizedBox(width: 10),
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  prefixIcon: Icon(Icons.search),
+            PageView(
+              controller: _pageController,
+              physics: NeverScrollableScrollPhysics(),
+              children: _pages,
+            ),
+            Positioned(
+              left: 15,
+              right: 15,
+              bottom: 12,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10,
+                      spreadRadius: 1,
+                      offset: Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: BottomNavigationBar(
+                    type: BottomNavigationBarType.fixed,
+                    currentIndex: _selectedIndex,
+                    selectedItemColor: Colors.green,
+                    showSelectedLabels: false,
+                    showUnselectedLabels: false,
+                    onTap: _onItemTapped,
+                    items: [
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.home),
+                        label: '',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.attach_money),
+                        label: '',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.shopping_cart),
+                        label: '',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.person),
+                        label: '',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.help_outline),
+                        label: '',
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ],
         ),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
+        drawer: Drawer(
+          child: Container(
+            color: const Color.fromRGBO(170, 206, 144, 1),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                
+                ListTile(
+                  leading: Icon(Icons.info, color: Colors.white),
+                  title: Text('About Us', style: GoogleFonts.poppins(color: Colors.white)),
+                  onTap: () {
+                    _onDrawerItemTapped(AboutUsPage());
+                  },
                 ),
-              ),
+                ListTile(
+                  leading: Icon(Icons.contact_page, color: Colors.white),
+                  title: Text('Contact Us', style: GoogleFonts.poppins(color: Colors.white)),
+                  onTap: () {
+                    _onDrawerItemTapped(ContactUsPage());
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.person, color: Colors.white),
+                  title: Text('Know More', style: GoogleFonts.poppins(color: Colors.white)),
+                  onTap: () {
+                    _onDrawerItemTapped(KnowMorePage());
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.logout, color: Colors.white),
+                  title: Text('Log Out', style: GoogleFonts.poppins(color: Colors.white)),
+                  onTap: () async {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginPage(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Home'),
-              onTap: () {
-                setState(() {
-                  _currentIndex = 0;
-                  Navigator.pop(context); // Close the drawer
-                });
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.attach_money_rounded),
-              title: Text('Money'),
-              onTap: () {
-                setState(() {
-                  _currentIndex = 1;
-                  Navigator.pop(context); // Close the drawer
-                });
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Profile'),
-              onTap: () {
-                setState(() {
-                  _currentIndex = 2;
-                  Navigator.pop(context); // Close the drawer
-                });
-              },
-            ),
-            // Add more ListTile items for other pages as needed
-          ],
+          ),
         ),
-      ),
-      body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.attach_money_rounded), label: 'Money'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-          // BottomNavigationBarItem(icon: Icon(Icons.shop), label: 'Shop'),
-        ],
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white,
-        unselectedLabelStyle: TextStyle(color: Colors.white),
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
       ),
     );
   }

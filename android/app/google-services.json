@@ -1,0 +1,135 @@
+{
+  "project_info": {
+    "project_number": "468780677284",
+    "firebase_url": "https://afflicartz-26169-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "afflicartz-26169",
+    "storage_bucket": "afflicartz-26169.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:468780677284:android:e52d2fa3298eea986e0e31",
+        "android_client_info": {
+          "package_name": "com.afflicartz.afflicartz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "468780677284-5gb7ftihofqp3m4fo9pua7qrq3n0kpqj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCl-11ymoIOD-_z0J9WpWn7A4Ydp2iAjxE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "468780677284-5gb7ftihofqp3m4fo9pua7qrq3n0kpqj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "468780677284-7ic7p3koe8fc37bd9cek46mutaek0f37.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.test1"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:468780677284:android:319aafb14cf5ad096e0e31",
+        "android_client_info": {
+          "package_name": "com.afflicartz.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "468780677284-ldt1q2td134tlqf8vss61k36vreujuuf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.afflicartz.app",
+            "certificate_hash": "508d39faad4d310bee1dd675e25a9839bcc088e9"
+          }
+        },
+        {
+          "client_id": "468780677284-5gb7ftihofqp3m4fo9pua7qrq3n0kpqj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCl-11ymoIOD-_z0J9WpWn7A4Ydp2iAjxE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "468780677284-5gb7ftihofqp3m4fo9pua7qrq3n0kpqj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "468780677284-7ic7p3koe8fc37bd9cek46mutaek0f37.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.test1"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:468780677284:android:11f502d41e299fa36e0e31",
+        "android_client_info": {
+          "package_name": "com.example.pavan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "468780677284-f7ghslha3n3a849n03829o4ep7b36v7k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pavan",
+            "certificate_hash": "508d39faad4d310bee1dd675e25a9839bcc088e9"
+          }
+        },
+        {
+          "client_id": "468780677284-5gb7ftihofqp3m4fo9pua7qrq3n0kpqj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCl-11ymoIOD-_z0J9WpWn7A4Ydp2iAjxE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "468780677284-5gb7ftihofqp3m4fo9pua7qrq3n0kpqj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "468780677284-7ic7p3koe8fc37bd9cek46mutaek0f37.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.test1"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
